@@ -429,10 +429,10 @@ def login():
 </p>
 
             <div class="demo">
-                <strong>Phase #1 Demonstration Account</strong><br><br>
-                Username: analyst<br>
-                Password: Password1
-            </div>
+    <strong>Phase #2 Demonstration Account</strong><br><br>
+    Username: analyst<br>
+    Password: NewPassword2!
+</div>
 
         </div>
     </body>
