@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, url_for, session, render_template_string
 import sqlite3
+import re
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -7,6 +8,26 @@ app = Flask(__name__)
 app.secret_key = "SDC480-Phase1-Fraud-Review-System"
 DATABASE = "fraud_review.db"
 
+# ---------------- PASSWORD SECURITY ----------------
+
+def validate_password(password):
+    """
+    Validate Phase #2 password-complexity requirements.
+    Passwords must contain at least 8 characters, one uppercase
+    letter, one lowercase letter, one number, and one special character.
+    """
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not re.search(r"[A-Z]", password):
+        return False, "Password must contain at least one uppercase letter."
+    if not re.search(r"[a-z]", password):
+        return False, "Password must contain at least one lowercase letter."
+    if not re.search(r"\d", password):
+        return False, "Password must contain at least one number."
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "Password must contain at least one special character."
+
+    return True, ""
 
 # ---------------- DATABASE ----------------
 
@@ -272,6 +293,7 @@ def page(title, content):
         <nav>
             <a href="{{ url_for('dashboard') }}">Dashboard</a>
             <a href="{{ url_for('transactions') }}">Transaction Queue</a>
+            <a href="{{ url_for('search_transactions') }}">Search Transactions</a>
             <a href="{{ url_for('review_history') }}">Review History</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         </nav>
@@ -400,6 +422,11 @@ def login():
 
             </form>
 
+            <p style="text-align: center; margin-top: 18px;">
+    New analyst?
+    <a href="{{ url_for('register') }}">Create an Account</a>
+</p>
+
             <div class="demo">
                 <strong>Phase #1 Demonstration Account</strong><br><br>
                 Username: analyst<br>
@@ -410,6 +437,203 @@ def login():
     </body>
     </html>
     """, error=error)
+
+# --------------- USER REGISTRATION ---------------
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    error = ""
+    success = ""
+
+    if request.method == "POST":
+        full_name = request.form["full_name"].strip()
+        username = request.form["username"].strip()
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        # Validate required fields
+        if not full_name or not username or not password or not confirm_password:
+            error = "All fields are required."
+
+        # Validate password complexity
+        else:
+            valid_password, password_message = validate_password(password)
+
+            if not valid_password:
+                error = password_message
+
+            elif password != confirm_password:
+                error = "Passwords do not match."
+
+            else:
+                conn = get_db()
+
+                existing_user = conn.execute(
+                    "SELECT * FROM users WHERE username = ?",
+                    (username,)
+                ).fetchone()
+
+                if existing_user:
+                    error = "That username is already registered."
+                    conn.close()
+
+                else:
+                    conn.execute(
+                        """
+                        INSERT INTO users
+                        (username, password_hash, full_name, role)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        (
+                            username,
+                            generate_password_hash(password),
+                            full_name,
+                            "Fraud Analyst"
+                        )
+                    )
+
+                    conn.commit()
+                    conn.close()
+
+                    success = "Account created successfully. You may now sign in."
+
+    return render_template_string("""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register | Fraud Transaction Review System</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #17324d;
+            margin: 0;
+        }
+
+        .register-box {
+            width: 420px;
+            margin: 70px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #17324d;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 11px;
+            background: #1f73b7;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #b00020;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #16713b;
+            font-weight: bold;
+        }
+
+        .requirements {
+            margin-top: 15px;
+            padding: 12px;
+            background: #eef4f8;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-box">
+
+        <h1>Create Analyst Account</h1>
+        <p>Fraud Transaction Review System</p>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success">{{ success }}</p>
+        {% endif %}
+
+        <form method="POST">
+
+            <label>Full Name</label>
+            <input
+                type="text"
+                name="full_name"
+                required>
+
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                required>
+
+            <label>Password</label>
+            <input
+                type="password"
+                name="password"
+                required>
+
+            <label>Confirm Password</label>
+            <input
+                type="password"
+                name="confirm_password"
+                required>
+
+            <div class="requirements">
+                <strong>Password Requirements</strong><br>
+                At least 8 characters<br>
+                At least one uppercase letter<br>
+                At least one lowercase letter<br>
+                At least one number<br>
+                At least one special character
+            </div>
+
+            <button type="submit">Create Account</button>
+
+        </form>
+
+        <div class="login-link">
+            Already registered?
+            <a href="{{ url_for('login') }}">Return to Sign In</a>
+        </div>
+
+    </div>
+
+</body>
+</html>
+""", error=error, success=success)
 
 
 # ---------------- PAGE 2: DASHBOARD ----------------
@@ -812,6 +1036,142 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+# -------------- PHASE #2: TRANSACTION SEARCH --------------
+
+@app.route("/search", methods=["GET"])
+@login_required
+def search_transactions():
+    """
+    Search fraud transactions using partial/wildcard matching.
+    SQLite LIKE with % wildcards allows users to enter all or part
+    of an account ID, merchant, location, transaction type, or status.
+    """
+    query = request.args.get("q", "").strip()
+    results = []
+
+    if query:
+        conn = get_db()
+
+        # Add wildcards automatically so partial searches are supported.
+        search_term = f"%{query}%"
+
+        results = conn.execute(
+            """
+            SELECT *
+            FROM transactions
+            WHERE account_id LIKE ?
+               OR merchant LIKE ?
+               OR location LIKE ?
+               OR transaction_type LIKE ?
+               OR status LIKE ?
+            ORDER BY transaction_date DESC
+            """,
+            (
+                search_term,
+                search_term,
+                search_term,
+                search_term,
+                search_term,
+            ),
+        ).fetchall()
+
+        conn.close()
+
+    if results:
+        rows = ""
+
+        for transaction in results:
+            rows += f"""
+                <tr>
+                    <td>{transaction['transaction_id']}</td>
+                    <td>{transaction['account_id']}</td>
+                    <td>{transaction['transaction_date']}</td>
+                    <td>{transaction['merchant']}</td>
+                    <td>${transaction['amount']:,.2f}</td>
+                    <td>{transaction['location']}</td>
+                    <td>{transaction['transaction_type']}</td>
+                    <td>{transaction['fraud_score']}</td>
+                    <td>{transaction['status']}</td>
+                </tr>
+            """
+
+        results_html = f"""
+            <h3>Search Results</h3>
+            <p>
+                {len(results)} transaction(s) matched
+                <strong>{query}</strong>.
+            </p>
+
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Account</th>
+                            <th>Date</th>
+                            <th>Merchant</th>
+                            <th>Amount</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Fraud Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
+        """
+    elif query:
+        results_html = f"""
+            <div class="card">
+                <h3>Search Results</h3>
+                <p>No transactions matched <strong>{query}</strong>.</p>
+                <p>Try entering only part of an account number,
+                merchant, location, transaction type, or status.</p>
+            </div>
+        """
+    else:
+        results_html = """
+            <p>
+                Enter a search term above to display matching
+                transaction records.
+            </p>
+        """
+
+    content = f"""
+        <div class="card">
+            <h2>Search Transactions</h2>
+
+            <p>
+                Search the fraud transaction database by account ID,
+                merchant, location, transaction type, or status.
+                Partial searches are supported, so you do not need to
+                enter the complete value.
+            </p>
+
+            <form method="GET" action="{url_for('search_transactions')}">
+                <label for="q"><strong>Search Term</strong></label>
+                <input
+                    type="text"
+                    id="q"
+                    name="q"
+                    value="{query}"
+                    placeholder="Example: ACCT-100, Baltimore, Pending"
+                    required
+                >
+
+                <button type="submit">Search Transactions</button>
+            </form>
+        </div>
+
+        <div class="card">
+            {results_html}
+        </div>
+    """
+
+    return page("Search Transactions", content)
 
 # ---------------- START APPLICATION ----------------
 
