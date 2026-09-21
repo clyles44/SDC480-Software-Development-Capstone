@@ -287,7 +287,7 @@ def page(title, content):
 
         <header>
             <h1>Fraud Transaction Review System</h1>
-            <p>Phase #1 | SDC480 Software Development Capstone</p>
+            <p>Phase #2 | SDC480 Software Development Capstone</p>
         </header>
 
         <nav>
@@ -295,6 +295,7 @@ def page(title, content):
             <a href="{{ url_for('transactions') }}">Transaction Queue</a>
             <a href="{{ url_for('search_transactions') }}">Search Transactions</a>
             <a href="{{ url_for('review_history') }}">Review History</a>
+            <a href="{{ url_for('change_password') }}">Change Password</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         </nav>
 
@@ -304,7 +305,7 @@ def page(title, content):
         </div>
 
         <footer>
-            Fraud Transaction Review System | Phase #1
+            Fraud Transaction Review System | Phase #2
         </footer>
 
     </body>
@@ -691,7 +692,7 @@ def dashboard():
         </div>
 
         <div class="card" style="margin-top:20px;">
-            <h3>Phase #1 Purpose</h3>
+            <h3>Phase #2 Purpose</h3>
 
             <p>
                 The Fraud Transaction Review System provides a centralized
@@ -1035,6 +1036,115 @@ def review_history():
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+# ---------------- PHASE #2: CHANGE PASSWORD ----------------
+
+@app.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    """
+    Allow a signed-in analyst to change their password.
+    The current password must be verified and the new password
+    must satisfy the Phase #2 password-complexity requirements.
+    """
+    error = ""
+    success = ""
+
+    if request.method == "POST":
+        current_password = request.form["current_password"]
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+
+        conn = get_db()
+
+        user = conn.execute(
+            "SELECT * FROM users WHERE user_id = ?",
+            (session["user_id"],)
+        ).fetchone()
+
+        # Verify the analyst's current password.
+        if not user or not check_password_hash(
+            user["password_hash"], current_password
+        ):
+            error = "Current password is incorrect."
+
+        # Make sure both new-password entries match.
+        elif new_password != confirm_password:
+            error = "New passwords do not match."
+
+        else:
+            # Reuse the same complexity rules used during registration.
+            valid, message = validate_password(new_password)
+
+            if not valid:
+                error = message
+
+            elif check_password_hash(user["password_hash"], new_password):
+                error = "New password must be different from the current password."
+
+            else:
+                new_hash = generate_password_hash(new_password)
+
+                conn.execute(
+                    "UPDATE users SET password_hash = ? WHERE user_id = ?",
+                    (new_hash, session["user_id"])
+                )
+                conn.commit()
+
+                success = "Password changed successfully."
+
+        conn.close()
+
+    content = f"""
+    <div class="card">
+
+        <h2>Change Password</h2>
+
+        <p>
+            Update your analyst account password. Your new password
+            must meet the system password-complexity requirements.
+        </p>
+
+        {"<p style='color: #b00020; font-weight: bold;'>" + error + "</p>" if error else ""}
+        {"<p style='color: green; font-weight: bold;'>" + success + "</p>" if success else ""}
+
+        <form method="POST">
+
+            <label>Current Password</label>
+            <input
+                type="password"
+                name="current_password"
+                required>
+
+            <label>New Password</label>
+            <input
+                type="password"
+                name="new_password"
+                required>
+
+            <label>Confirm New Password</label>
+            <input
+                type="password"
+                name="confirm_password"
+                required>
+
+            <p>
+                <strong>Password Requirements</strong><br>
+                At least 8 characters<br>
+                At least one uppercase letter<br>
+                At least one lowercase letter<br>
+                At least one number<br>
+                At least one special character
+            </p>
+
+            <button type="submit">Change Password</button>
+
+        </form>
+
+    </div>
+    """
+
+    return page("Change Password", content)
 
 # -------------- PHASE #2: TRANSACTION SEARCH --------------
 
