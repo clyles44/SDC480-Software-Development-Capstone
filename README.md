@@ -1,136 +1,219 @@
-# \# Fraud Transaction Review System
+# Fraud Transaction Review System
 
-# 
+## SDC480 Software Development Capstone
 
-# \## SDC480 Software Development Capstone
+**Student:** Christopher Lyles  
+**Project:** Fraud Transaction Review System  
+**Current Development Phase:** Phase #3
 
-# 
+---
 
-# \*\*Student:\*\* Christopher Lyles  
+## Project Overview
 
-# \*\*Project:\*\* Fraud Transaction Review System  
+The Fraud Transaction Review System is a web-based application designed to provide fraud analysts with a centralized workflow for reviewing potentially suspicious financial transactions.
 
-# \*\*Phase:\*\* Phase #1
+The application allows an analyst to securely log in, view transactions requiring investigation, examine transaction details, document review decisions, search transaction records, maintain an audit history of completed investigations, and manage transaction data.
 
-# 
+The application is being developed incrementally throughout the SDC480 Software Development Capstone. Each phase builds upon the functionality completed during the previous phase.
 
-# \## Project Overview
+---
 
-# 
+## Phase #1 – Initial Application Foundation
 
-# The Fraud Transaction Review System is a web-based application designed to provide fraud analysts with a centralized workflow for reviewing potentially suspicious financial transactions. The system allows an analyst to securely log in, view transactions requiring investigation, examine transaction details, document a review decision, and maintain an audit history of completed investigations.
+Phase #1 established the initial working version of the Fraud Transaction Review System.
 
-# 
+### Phase #1 Features
 
-# \## Phase #1 Features
+- Secure analyst login
+- Fraud operations dashboard
+- Pending transaction count
+- High-risk transaction count
+- Completed review count
+- Transaction review queue
+- Individual transaction details
+- Analyst review workflow
+- Fraud decision documentation
+- Review history and audit trail
+- SQLite database integration
 
-# 
+Phase #1 established the core fraud-review workflow and database-backed application structure.
 
-# Phase #1 establishes the initial working version of the application and includes:
+---
 
-# 
+## Phase #2 – Design and Application Development
 
-# \- Secure analyst login
+Phase #2 expanded the initial application and continued development of the website and database functionality.
 
-# \- Fraud operations dashboard
+### Phase #2 Functionality
 
-# \- Pending transaction count
+- Continued development of the web application interface
+- Navigation between application pages
+- Functional analyst login
+- User information stored in the SQLite database
+- Fraud operations dashboard
+- Transaction review queue
+- Individual transaction detail pages
+- Analyst review workflow
+- Review history
+- Database-backed application data
+- Continued interface and application design improvements
 
-# \- High-risk transaction count
+Phase #2 established a more complete working website and demonstrated continued development of the application's interface, database, and fraud-review workflow.
 
-# \- Completed review count
+---
 
-# \- Transaction review queue
+## Phase #3 – Search, Data Management, and Security
 
-# \- Individual transaction details
+Phase #3 builds upon the previous phases by adding transaction search functionality, transaction data-management capabilities, additional input validation, and account-security functionality.
 
-# \- Analyst review workflow
+### Transaction Search
 
-# \- Fraud decision documentation
+The application provides a dedicated Search Transactions page.
 
-# \- Review history and audit trail
+Transactions can be searched by:
 
-# \- SQLite database integration
+- Account ID
+- Merchant
+- Location
+- Transaction type
+- Status
 
-# 
+Partial searches are supported, allowing an analyst to enter only part of a value rather than the complete search term.
 
-# \## Technologies Used
+Search results display the matching transaction records and provide access to transaction-management actions.
 
-# 
+### Transaction Data Management
 
-# \- Python 3
+Phase #3 includes CRUD functionality for transaction records:
 
-# \- Flask
+- Create new transaction records
+- Read and search transaction records
+- Update existing transaction records
+- Delete transaction records
+- Confirmation before deletion
 
-# \- SQLite
+### Input Validation
 
-# \- HTML/CSS
+The transaction-management functionality includes validation controls such as:
 
-# \- Git
+- Required fields
+- Transaction amount must be zero or greater
+- Fraud score must be between 0 and 100
+- Controlled transaction-type selections
+- Controlled transaction-status selections
 
-# \- GitHub
+These controls help prevent invalid transaction data from being submitted to the database.
 
-# 
+### Account and Password Security
 
-# \## Application Structure
+The application includes account-security controls such as:
 
-# 
+- Authenticated access to protected application pages
+- Password hashing
+- Current-password verification before changing a password
+- New-password confirmation
+- Password-complexity requirements
 
-# \- `app.py` - Main Flask web application and application logic
+Password requirements include:
 
-# \- `fraud\_review.db` - SQLite database containing application data
+- At least 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one number
+- At least one special character
 
-# \- `README.md` - Project documentation
+### Fraud Review and Audit Functionality
 
-# 
+The existing fraud-review workflow remains integrated with Phase #3.
 
-# \## Running the Application
+Analysts can:
 
-# 
+- View transactions prioritized by fraud risk score
+- Open individual transaction details
+- Record an analyst review decision
+- Enter analyst notes
+- Submit completed reviews
+- View completed reviews in the Fraud Review History
+- Maintain an audit trail showing the analyst and review date/time
 
-# 1\. Install Python and Flask.
+---
 
-# 2\. Open a command prompt or Anaconda Prompt.
+## Technologies Used
 
-# 3\. Navigate to the project directory.
+- Python 3
+- Flask
+- SQLite
+- HTML
+- CSS
+- Git
+- GitHub
 
-# 4\. Run:
+---
 
-# 
+## Application Structure
 
-# &#x20;  `python app.py`
+- `app.py` – Current Flask application and primary source code
+- `fraud_review.db` – SQLite database containing application data
+- `app_phase1_backup.py` – Backup of the Phase #1 application
+- `app_phase2_backup.py` – Backup of the Phase #2 application
+- `README.md` – Project documentation
+- `templates/` – Reserved for external HTML templates
+- `static/` – Reserved for external static resources
 
-# 
+### Source Code Organization
 
-# 5\. Open a web browser and navigate to:
+The current application is implemented primarily in `app.py`.
 
-# 
+The file contains the Flask routes and primary application logic, including authentication, database operations, page rendering, transaction review functionality, search functionality, CRUD operations, input validation, password-management functionality, and dynamically generated HTML/CSS.
 
-# &#x20;  `http://127.0.0.1:5000`
+The `templates` and `static` directories are currently reserved for future separation of HTML templates and static resources if the application is further refactored.
 
-# 
+The phase backup files preserve earlier versions of the source code and provide evidence of the application's incremental development.
 
-# \## Phase #1 Demonstration Account
+---
 
-# 
+## Running the Application
 
-# \*\*Username:\*\* analyst  
+1. Install Python and Flask.
+2. Open a command prompt, terminal, or Anaconda Prompt.
+3. Navigate to the project directory.
+4. Run:
 
-# \*\*Password:\*\* Password1
+   `python app.py`
 
-# 
+5. Open a web browser and navigate to:
 
-# The demonstration account provides access to the Phase #1 fraud analyst workflow.
+   `http://127.0.0.1:5000`
 
-# 
+---
 
-# \## Phase #1 Status
+## Phase #3 Functional Testing
 
-# 
+The current application has been tested for the following functionality:
 
-# Phase #1 provides a functional foundation for the Fraud Transaction Review System. The application currently supports authentication, transaction review, analyst decisions, dashboard statistics, and an audit history backed by SQLite.
+- Successful authenticated login
+- Dashboard statistics
+- Transaction review queue
+- Individual transaction details
+- Analyst review submission
+- Completed review history
+- Transaction searching
+- Partial transaction searching
+- Adding a transaction
+- Editing a transaction
+- Deleting a transaction
+- Delete confirmation
+- Required-field validation
+- Transaction amount validation
+- Fraud score validation
+- Password-management functionality
 
-# 
+---
 
-# Additional functionality and improvements will be incorporated during subsequent phases of the SDC480 Software Development Capstone.
+## Current Project Status
 
+Phase #3 provides a functional expansion of the Fraud Transaction Review System while preserving the functionality developed during Phases #1 and #2.
+
+The current application supports authentication, dashboard statistics, transaction review, analyst decisions, audit history, transaction searching, transaction CRUD operations, input validation, password security, and SQLite database integration.
+
+Development will continue in subsequent phases of the SDC480 Software Development Capstone.

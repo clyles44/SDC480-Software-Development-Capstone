@@ -287,7 +287,7 @@ def page(title, content):
 
         <header>
             <h1>Fraud Transaction Review System</h1>
-            <p>Phase #3 | SDC480 Software Development Capstone</p>
+            <p>Phase #2 | SDC480 Software Development Capstone</p>
         </header>
 
         <nav>
@@ -305,7 +305,7 @@ def page(title, content):
         </div>
 
         <footer>
-            Fraud Transaction Review System | Phase #3
+            Fraud Transaction Review System | Phase #2
         </footer>
 
     </body>
@@ -429,7 +429,7 @@ def login():
 </p>
 
             <div class="demo">
-    <strong>Phase #3 Demonstration Account</strong><br><br>
+    <strong>Phase #2 Demonstration Account</strong><br><br>
     Username: analyst<br>
     Password: NewPassword2!
 </div>
@@ -692,7 +692,7 @@ def dashboard():
         </div>
 
         <div class="card" style="margin-top:20px;">
-            <h3>Phase #3 Purpose</h3>
+            <h3>Phase #2 Purpose</h3>
 
             <p>
                 The Fraud Transaction Review System provides a centralized
@@ -1045,7 +1045,7 @@ def change_password():
     """
     Allow a signed-in analyst to change their password.
     The current password must be verified and the new password
-    must satisfy the Phase #3 password-complexity requirements.
+    must satisfy the Phase #2 password-complexity requirements.
     """
     error = ""
     success = ""
@@ -1146,152 +1146,7 @@ def change_password():
 
     return page("Change Password", content)
 
-# -------------- PHASE #3: TRANSACTION SEARCH AND CRUD --------------
-
-# ---------------- PHASE #3: ADD TRANSACTION ----------------
-
-@app.route("/transaction/add", methods=["GET", "POST"])
-@login_required
-def add_transaction():
-    """
-    Allow an authenticated analyst to add a new transaction.
-    After the transaction is saved, the analyst is returned to
-    the search page so the new record can be viewed immediately.
-    """
-    error = ""
-
-    if request.method == "POST":
-        account_id = request.form["account_id"].strip()
-        transaction_date = request.form["transaction_date"].strip()
-        merchant = request.form["merchant"].strip()
-        amount = request.form["amount"].strip()
-        location = request.form["location"].strip()
-        transaction_type = request.form["transaction_type"].strip()
-        fraud_score = request.form["fraud_score"].strip()
-        status = request.form["status"].strip()
-
-        try:
-            amount_value = float(amount)
-            fraud_score_value = int(fraud_score)
-
-            if amount_value < 0:
-                error = "Amount cannot be negative."
-            elif fraud_score_value < 0 or fraud_score_value > 100:
-                error = "Fraud score must be between 0 and 100."
-            else:
-                conn = get_db()
-
-                conn.execute("""
-                    INSERT INTO transactions
-                    (account_id, transaction_date, merchant, amount,
-                     location, transaction_type, fraud_score, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    account_id,
-                    transaction_date,
-                    merchant,
-                    amount_value,
-                    location,
-                    transaction_type,
-                    fraud_score_value,
-                    status
-                ))
-
-                conn.commit()
-                conn.close()
-
-                return redirect(
-                    url_for("search_transactions", q=account_id)
-                )
-
-        except ValueError:
-            error = "Amount and fraud score must contain valid numbers."
-
-    content = f"""
-        <div class="card">
-
-            <h2>Add Transaction</h2>
-
-            <p>
-                Enter the transaction information below. After the record
-                is added, it will be displayed on the transaction search page.
-            </p>
-
-            {"<p class='danger'>" + error + "</p>" if error else ""}
-
-            <form method="POST">
-
-                <div style="margin-bottom: 15px;">
-    <label><strong>Account ID</strong></label><br>
-    <input type="text" name="account_id"
-           placeholder="Example: ACCT-1006" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Transaction Date and Time</strong></label><br>
-    <input type="text" name="transaction_date"
-           placeholder="Example: 2026-09-27 21:30" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Merchant</strong></label><br>
-    <input type="text" name="merchant" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Amount</strong></label><br>
-    <input type="number" name="amount"
-           min="0" step="0.01" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Location</strong></label><br>
-    <input type="text" name="location" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Transaction Type</strong></label><br>
-    <select name="transaction_type" required>
-        <option value="">Select Transaction Type</option>
-        <option value="Card Purchase">Card Purchase</option>
-        <option value="Online Purchase">Online Purchase</option>
-        <option value="ATM Withdrawal">ATM Withdrawal</option>
-    </select>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Fraud Score</strong></label><br>
-    <input type="number" name="fraud_score"
-           min="0" max="100" required>
-</div>
-
-<div style="margin-bottom: 15px;">
-    <label><strong>Status</strong></label><br>
-    <select name="status" required>
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Fraud Confirmed">Fraud Confirmed</option>
-        <option value="Escalated">Escalated</option>
-    </select>
-</div>
-
-                <br><br>
-
-                <button class="button" type="submit">
-                    Add Transaction
-                </button>
-
-                <a class="button"
-                   href="{url_for('search_transactions')}">
-                    Cancel
-                </a>
-
-            </form>
-
-        </div>
-    """
-
-    return page("Add Transaction", content)
+# -------------- PHASE #2: TRANSACTION SEARCH --------------
 
 @app.route("/search", methods=["GET"])
 @login_required
@@ -1347,19 +1202,6 @@ def search_transactions():
                     <td>{transaction['transaction_type']}</td>
                     <td>{transaction['fraud_score']}</td>
                     <td>{transaction['status']}</td>
-                    <td>
-                        <a class="button"
-                            href="{url_for('edit_transaction', transaction_id=transaction['transaction_id'])}">
-                            Edit
-                        </a>
-                    
-                        <form method="POST"
-                                action="{url_for('delete_transaction', transaction_id=transaction['transaction_id'])}"
-                                style="display:inline;"
-                                onsubmit="return confirm('Are you sure you want to delete this transaction?');">
-                            <button class="button" type="submit">Delete</button>
-                        </form>                     
-                    </td>
                 </tr>
             """
 
@@ -1383,7 +1225,6 @@ def search_transactions():
                             <th>Type</th>
                             <th>Fraud Score</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1433,14 +1274,6 @@ def search_transactions():
 
                 <button type="submit">Search Transactions</button>
             </form>
-
-            <br>
-
-            <a class="button"
-                href="{url_for('add_transaction')}">
-                    + Add New Transaction
-            </a>
-
         </div>
 
         <div class="card">
@@ -1449,210 +1282,6 @@ def search_transactions():
     """
 
     return page("Search Transactions", content)
-
-# --------------- PHASE #3: EDIT TRANSACTION ---------------
-
-@app.route("/transaction/edit/<int:transaction_id>", methods=["GET", "POST"])
-@login_required
-def edit_transaction(transaction_id):
-    """
-    Allow an authenticated analyst to update an existing transaction.
-    The current transaction values are loaded into the form automatically.
-    """
-
-    conn = get_db()
-
-    transaction = conn.execute(
-        "SELECT * FROM transactions WHERE transaction_id = ?",
-        (transaction_id,)
-    ).fetchone()
-
-    if transaction is None:
-        conn.close()
-        return redirect(url_for("search_transactions"))
-
-    error = ""
-
-    if request.method == "POST":
-        account_id = request.form["account_id"].strip()
-        transaction_date = request.form["transaction_date"].strip()
-        merchant = request.form["merchant"].strip()
-        amount = request.form["amount"].strip()
-        location = request.form["location"].strip()
-        transaction_type = request.form["transaction_type"].strip()
-        fraud_score = request.form["fraud_score"].strip()
-        status = request.form["status"].strip()
-
-        try:
-            amount_value = float(amount)
-            fraud_score_value = int(fraud_score)
-
-            if amount_value < 0:
-                error = "Amount cannot be negative."
-            elif fraud_score_value < 0 or fraud_score_value > 100:
-                error = "Fraud score must be between 0 and 100."
-            else:
-                conn.execute(
-                    """
-                    UPDATE transactions
-                    SET account_id = ?,
-                        transaction_date = ?,
-                        merchant = ?,
-                        amount = ?,
-                        location = ?,
-                        transaction_type = ?,
-                        fraud_score = ?,
-                        status = ?
-                    WHERE transaction_id = ?
-                    """,
-                    (
-                        account_id,
-                        transaction_date,
-                        merchant,
-                        amount_value,
-                        location,
-                        transaction_type,
-                        fraud_score_value,
-                        status,
-                        transaction_id,
-                    ),
-                )
-
-                conn.commit()
-                conn.close()
-
-                return redirect(
-                    url_for("search_transactions", q=account_id)
-                )
-
-        except ValueError:
-            error = "Amount and fraud score must contain valid numbers."
-
-    content = f"""
-        <div class="card">
-            <h2>Edit Transaction</h2>
-
-            <p>
-                Update the transaction information below and save your changes.
-            </p>
-
-            {"<p class='danger'>" + error + "</p>" if error else ""}
-
-            <form method="POST">
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Account ID</strong></label><br>
-                    <input type="text" name="account_id"
-                           value="{transaction['account_id']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Transaction Date and Time</strong></label><br>
-                    <input type="text" name="transaction_date"
-                           value="{transaction['transaction_date']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Merchant</strong></label><br>
-                    <input type="text" name="merchant"
-                           value="{transaction['merchant']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Amount</strong></label><br>
-                    <input type="number" name="amount"
-                           min="0" step="0.01"
-                           value="{transaction['amount']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Location</strong></label><br>
-                    <input type="text" name="location"
-                           value="{transaction['location']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Transaction Type</strong></label><br>
-                    <select name="transaction_type" required>
-                        <option value="{transaction['transaction_type']}">
-                            {transaction['transaction_type']}
-                        </option>
-                        <option value="Card Purchase">Card Purchase</option>
-                        <option value="Online Purchase">Online Purchase</option>
-                        <option value="ATM Withdrawal">ATM Withdrawal</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Fraud Score</strong></label><br>
-                    <input type="number" name="fraud_score"
-                           min="0" max="100"
-                           value="{transaction['fraud_score']}" required>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <label><strong>Status</strong></label><br>
-                    <select name="status" required>
-                        <option value="{transaction['status']}">
-                            {transaction['status']}
-                        </option>
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Fraud Confirmed">Fraud Confirmed</option>
-                        <option value="Escalated">Escalated</option>
-                    </select>
-                </div>
-
-                <button class="button" type="submit">
-                    Save Changes
-                </button>
-
-                <a class="button"
-                   href="{url_for('search_transactions', q=transaction['account_id'])}">
-                    Cancel
-                </a>
-
-            </form>
-        </div>
-    """
-
-    conn.close()
-    return page("Edit Transaction", content)
-
-# --------------- PHASE #3: DELETE TRANSACTION ----------------
-
-@app.route("/transaction/delete/<int:transaction_id>", methods=["POST"])
-@login_required
-def delete_transaction(transaction_id):
-    """
-    Delete an existing transaction from the database.
-    Only authenticated users can perform this action.
-    """
-
-    conn = get_db()
-
-    transaction = conn.execute(
-        "SELECT * FROM transactions WHERE transaction_id = ?",
-        (transaction_id,)
-    ).fetchone()
-
-    if transaction is None:
-        conn.close()
-        return redirect(url_for("search_transactions"))
-
-    account_id = transaction["account_id"]
-
-    conn.execute(
-        "DELETE FROM transactions WHERE transaction_id = ?",
-        (transaction_id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect(
-        url_for("search_transactions", q=account_id)
-    )
 
 # ---------------- START APPLICATION ----------------
 
