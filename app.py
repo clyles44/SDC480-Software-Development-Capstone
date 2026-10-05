@@ -287,7 +287,7 @@ def page(title, content):
 
         <header>
             <h1>Fraud Transaction Review System</h1>
-            <p>Phase #3 | SDC480 Software Development Capstone</p>
+            <p>SDC480 Software Development Capstone | Final Project</p>
         </header>
 
         <nav>
@@ -305,7 +305,7 @@ def page(title, content):
         </div>
 
         <footer>
-            Fraud Transaction Review System | Phase #3
+            Fraud Transaction Review System | Final Project
         </footer>
 
     </body>
@@ -429,7 +429,7 @@ def login():
 </p>
 
             <div class="demo">
-    <strong>Phase #3 Demonstration Account</strong><br><br>
+    <strong>Demonstration Account</strong><br><br>
     Username: analyst<br>
     Password: NewPassword2!
 </div>
@@ -692,7 +692,7 @@ def dashboard():
         </div>
 
         <div class="card" style="margin-top:20px;">
-            <h3>Phase #3 Purpose</h3>
+            <h3>System Purpose</h3>
 
             <p>
                 The Fraud Transaction Review System provides a centralized
