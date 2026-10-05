@@ -212,11 +212,11 @@ The current application has been tested for the following functionality:
 
 ## Current Project Status
 
-Phase #3 provides a functional expansion of the Fraud Transaction Review System while preserving the functionality developed during Phases #1 and #2.
+Final Phase provides a functional expansion of the Fraud Transaction Review System while preserving the functionality developed during Phases #1 and #2.
 
 The current application supports authentication, dashboard statistics, transaction review, analyst decisions, audit history, transaction searching, transaction CRUD operations, input validation, password security, and SQLite database integration.
 
-Development will continue in subsequent phases of the SDC480 Software Development Capstone.
+Development is complete in subsequent phases of the SDC480 Software Development Capstone.
 
 ---
 
