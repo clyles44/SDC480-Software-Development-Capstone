@@ -217,3 +217,66 @@ Phase #3 provides a functional expansion of the Fraud Transaction Review System 
 The current application supports authentication, dashboard statistics, transaction review, analyst decisions, audit history, transaction searching, transaction CRUD operations, input validation, password security, and SQLite database integration.
 
 Development will continue in subsequent phases of the SDC480 Software Development Capstone.
+
+---
+
+# Project Summary
+
+## Project Description
+
+The Fraud Transaction Review System (FTRS) is a web-based application developed for the SDC480 Software Development Capstone. The application provides fraud analysts with a centralized workflow for reviewing suspicious financial transactions, documenting review decisions, and maintaining a history of completed investigations.
+
+The project was designed around a realistic fraud-review process with an emphasis on usability, security, data validation, and efficient transaction review.
+
+## Tasks Completed
+
+- Designed and developed a functional web-based fraud transaction review application.
+- Created analyst account registration and secure login functionality.
+- Implemented password complexity requirements and password-change functionality.
+- Added authentication and session-based access to protected application pages.
+- Developed a fraud operations dashboard displaying pending, high-risk, and completed transaction information.
+- Implemented transaction search functionality.
+- Added transaction review and review-history functionality.
+- Implemented add, edit, and delete capabilities for transaction data.
+- Added input validation and error handling for invalid user input.
+- Prevented duplicate usernames during analyst registration.
+- Created and maintained a SQLite database containing transaction and analyst information.
+- Populated the final project database with at least 12 transaction records.
+- Used Git and GitHub for version control, project documentation, and development history.
+- Performed final functional and security testing before submission.
+
+## Skills Learned
+
+- Python web application development
+- Flask application development
+- SQLite database design and management
+- CRUD operations
+- User authentication and session management
+- Password hashing and password validation
+- Input validation and error handling
+- Search functionality
+- User interface design
+- Application security
+- Git and GitHub version control
+- Software testing and debugging
+- Technical documentation
+
+## Languages and Technologies Used
+
+- Python
+- Flask
+- SQLite
+- HTML
+- CSS
+- Git
+- GitHub
+
+## Development Process
+
+The project was developed incrementally throughout the SDC480 course. Development began with project planning, requirements, database design, and the initial user interface. Additional functionality was added each week, including authentication, transaction searching, registration, CRUD operations, security controls, and interface improvements.
+
+Git and GitHub were used throughout development to maintain version history and document project progress. Instructor feedback and application testing were incorporated during each development phase. The final phase focused on security, data validation, functional testing, database updates, and preparing the application for final demonstration and portfolio use.
+
+## Project Link
+
+GitHub Repository: https://github.com/clyles44/SDC480-Software-Development-Capstone
